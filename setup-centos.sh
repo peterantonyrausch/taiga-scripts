@@ -73,34 +73,28 @@ su taiga -c "python3.5 manage.py compilemessages"
 su taiga -c "python3.5 manage.py collectstatic --noinput"
 
 cat > /home/taiga/taiga-back/settings/local.py << EOF
-from .development import *
 from .common import *
 
-MEDIA_URL = "http://127.0.0.1/media/"
-STATIC_URL = "http://127.0.0.1/static/"
-ADMIN_MEDIA_PREFIX = "http://127.0.0.1/static/admin/"
-SITES["front"]["scheme"] = "http"
-SITES["front"]["domain"] = "127.0.0.1"
+MEDIA_URL = "/media/"
+STATIC_URL = "/static/"
 
-SECRET_KEY = "theveryultratopsecretkey"
+# This should change if you want generate urls in emails
+# for external dns.
+SITES["front"]["domain"] = "localhost:8000"
 
-DEBUG = False
-TEMPLATE_DEBUG = False
+DEBUG = True
 PUBLIC_REGISTER_ENABLED = True
 
 DEFAULT_FROM_EMAIL = "no-reply@example.com"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'transaction_hooks.backends.postgresql_psycopg2',
-#        'NAME': 'taiga',
-#        'USER': 'taiga',
-#        'PASSWORD': 'changeme',
-#        'HOST': '',
-#        'PORT': '',
-#    }
-#}
+#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#EMAIL_USE_TLS = False
+#EMAIL_HOST = "localhost"
+#EMAIL_HOST_USER = ""
+#EMAIL_HOST_PASSWORD = ""
+#EMAIL_PORT = 25
+
 EOF
 
 #libzmq
@@ -136,12 +130,6 @@ git clone https://github.com/circus-tent/circus.git circus
 
 mkdir -p /home/taiga/conf
 cat > /home/taiga/conf/circus.ini << EOF
-[circus]
-check_delay = 5
-endpoint = tcp://127.0.0.1:5555
-pubsub_endpoint = tcp://127.0.0.1:5556
-statsd = true
-
 [watcher:taiga]
 working_dir = /home/taiga/taiga-back
 cmd = gunicorn
@@ -166,6 +154,7 @@ SHELL=/bin/bash
 USER=taiga
 LANG=en_US.UTF-8
 HOME=/home/taiga
+#PYTHONPATH=/home/taiga/.local/lib/python3.5/site-packages
 PYTHONPATH=/home/taiga/.virtualenvs/taiga/lib/python3.5/site-packages
 EOF
 
@@ -192,49 +181,36 @@ yum install -y nginx
 cat > /etc/nginx/conf.d/taiga.conf << 'EOF'
 server {
     listen 80 default_server;
+    listen 8000 default_server;
     server_name _;
 
     large_client_header_buffers 4 32k;
+
     client_max_body_size 50M;
     charset utf-8;
 
-#    access_log /home/taiga/logs/nginx.access.log;
-#    error_log /home/taiga/logs/nginx.error.log;
+    access_log /home/taiga/logs/nginx.access.log;
+    error_log /home/taiga/logs/nginx.error.log;
 
-    # Frontend
     location / {
-        root /home/taiga/taiga-front-dist/dist/;
-        try_files $uri $uri/ /index.html;
+        root /home/taiga/taiga-front/dist/;
+        try_files \$uri \$uri/ /index.html;
     }
 
-    # Backend
     location /api {
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Scheme $scheme;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host \$http_host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Scheme \$scheme;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:8001/api;
         proxy_redirect off;
     }
 
-    # Django admin access (/admin/)
-    location /admin {
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Scheme $scheme;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:8001$request_uri;
-        proxy_redirect off;
-    }
-
-    # Static files
     location /static {
         alias /home/taiga/taiga-back/static;
     }
 
-    # Media files
     location /media {
         alias /home/taiga/taiga-back/media;
     }
