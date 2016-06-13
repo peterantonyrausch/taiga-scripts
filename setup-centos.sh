@@ -189,8 +189,8 @@ server {
     client_max_body_size 50M;
     charset utf-8;
 
-    access_log /home/taiga/logs/nginx.access.log;
-    error_log /home/taiga/logs/nginx.error.log;
+#    access_log /home/taiga/logs/nginx.access.log;
+#    error_log /home/taiga/logs/nginx.error.log;
 
     location / {
         root /home/taiga/taiga-front/dist/;
