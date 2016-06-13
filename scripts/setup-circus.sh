@@ -27,7 +27,7 @@ SHELL=/bin/bash
 USER=taiga
 LANG=en_US.UTF-8
 HOME=/home/$USER
-PYTHONPATH=/home/$USER/.local/lib/python3.4/site-packages
+PYTHONPATH=/home/$USER/.local/lib/python3.5/site-packages
 EOF
 
 if [ ! -e ~/.setup/circus ]; then
