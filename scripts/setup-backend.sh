@@ -74,13 +74,11 @@ if [ ! -e ~/taiga-back ]; then
     python manage.py loaddata initial_role
     python manage.py sample_data
     deactivate
-
     popd
     
     pushd ~/taiga-events
     npm install
     sudo npm install -g coffee-script
-    
     mv /tmp/config.events.json config.json
     coffee index.coffee
    
