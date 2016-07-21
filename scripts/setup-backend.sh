@@ -73,7 +73,6 @@ if [ ! -e ~/taiga-back ]; then
     python manage.py loaddata initial_project_templates
     python manage.py loaddata initial_role
     python manage.py sample_data
-    deactivate
     popd
     
     pushd ~/taiga-events
@@ -83,7 +82,8 @@ if [ ! -e ~/taiga-back ]; then
     mv /tmp/config.events.json config.json
     
     # coffee index.coffee
-   
+    
+    deactivate
     popd
 else
     pushd ~/taiga-back
