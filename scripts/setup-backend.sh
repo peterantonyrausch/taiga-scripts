@@ -6,6 +6,7 @@ pushd ~
 
 cat > /tmp/settings.py <<EOF
 from .common import *
+from .celery import *
 
 MEDIA_URL = "/media/"
 STATIC_URL = "/static/"
@@ -27,15 +28,19 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 #EMAIL_HOST_PASSWORD = ""
 #EMAIL_PORT = 25
 
-EVENTS_PUSH_BACKEND = “taiga.events.backends.rabbitmq.EventsPushBackend”
-EVENTS_PUSH_BACKEND_OPTIONS = {“url”: “amqp://taiga:taiga@localhost:5672/taiga”}
+BROKER_URL = 'amqp://taiga:taiga@localhost:5672//'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ENABLED = True
+
+EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:taiga@localhost:5672/taiga"}
 
 EOF
 
 cat > /tmp/config.events.json <<EOF
 {
-    "url": "amqp://taiga:taiga@localhost:5672",
-    "secret": "taiga",
+    "url": "amqp://taiga:taiga@localhost:5672/taiga",
+    "secret": "mysecret",
     "webSocketServer": {
         "port": 8888
     }
@@ -46,6 +51,7 @@ EOF
 if [ ! -e ~/taiga-back ]; then
     createdb-if-needed taiga
     git clone https://github.com/taigaio/taiga-back.git taiga-back
+    git clone https://github.com/taigaio/taiga-events.git taiga-events
 
     pushd ~/taiga-back
     git checkout -f stable
@@ -69,13 +75,11 @@ if [ ! -e ~/taiga-back ]; then
     python manage.py sample_data
 
     popd
-    git clone https://github.com/taigaio/taiga-events.git
+    
     pushd ~/taiga-events
-
-    apt-install-if-needed nodejs nodejs-legacy npm
     npm install
     npm install -g coffee-script
-
+    
     mv /tmp/config.events.json config.json
     coffee index.coffee
 

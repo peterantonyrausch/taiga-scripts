@@ -5,4 +5,7 @@ if [ ! -e ~/.setup/buildessential ]; then
 
     # Utils
     apt-install-if-needed git tmux
+
+    # taiga-events
+    apt-install-if-needed nodejs nodejs-legacy npm
 fi
