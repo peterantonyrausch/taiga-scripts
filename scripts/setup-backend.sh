@@ -27,6 +27,20 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 #EMAIL_HOST_PASSWORD = ""
 #EMAIL_PORT = 25
 
+EVENTS_PUSH_BACKEND = “taiga.events.backends.rabbitmq.EventsPushBackend”
+EVENTS_PUSH_BACKEND_OPTIONS = {“url”: “amqp://taiga:taiga@localhost:5672/taiga”}
+
+EOF
+
+cat > /tmp/config.events.json <<EOF
+{
+    "url": "amqp://taiga:taiga@localhost:5672",
+    "secret": "taiga",
+    "webSocketServer": {
+        "port": 8888
+    }
+}
+
 EOF
 
 if [ ! -e ~/taiga-back ]; then
@@ -36,9 +50,9 @@ if [ ! -e ~/taiga-back ]; then
     pushd ~/taiga-back
     git checkout -f stable
 
-    # rabbit-create-user-if-needed taiga taiga  # username, password
-    # rabbit-create-vhost-if-needed taiga
-    # rabbit-set-permissions taiga taiga ".*" ".*" ".*" # username, vhost, configure, read, write
+    rabbit-create-user-if-needed taiga taiga  # username, password
+    rabbit-create-vhost-if-needed taiga
+    rabbit-set-permissions taiga taiga ".*" ".*" ".*" # username, vhost, configure, read, write
     mkvirtualenv-if-needed taiga
 
     # Settings
@@ -53,6 +67,17 @@ if [ ! -e ~/taiga-back ]; then
     python manage.py loaddata initial_project_templates
     python manage.py loaddata initial_role
     python manage.py sample_data
+
+    popd
+    git clone https://github.com/taigaio/taiga-events.git
+    pushd ~/taiga-events
+
+    apt-install-if-needed nodejs nodejs-legacy npm
+    npm install
+    npm install -g coffee-script
+
+    mv /tmp/config.events.json config.json
+    coffee index.coffee
 
     deactivate
     popd
