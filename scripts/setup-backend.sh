@@ -81,8 +81,8 @@ if [ ! -e ~/taiga-back ]; then
     npm-install-global coffee-script
 
     mv /tmp/config.events.json config.json
-
-    coffee index.coffee
+    
+    # coffee index.coffee
    
     popd
 else

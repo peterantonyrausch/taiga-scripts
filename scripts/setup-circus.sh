@@ -57,7 +57,7 @@ PYTHONPATH=/home/$USER/.local/lib/python3.5/site-packages
 
 [watcher:taiga-events]
 working_dir = /home/$USER/taiga-events
-cmd = coffee
+cmd = /usr/local/bin/coffee
 args = index.coffee
 uid = taiga
 numprocesses = 1
