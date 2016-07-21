@@ -7,10 +7,10 @@ pushd ~
 cat > /tmp/conf.json <<EOF
 {
     "api": "/api/v1/",
-    "eventsUrl": null,
+    "eventsUrl": "/events",
     "debug": "true",
     "publicRegisterEnabled": true,
-    "feedbackEnabled": false,
+    "feedbackEnabled": true,
     "privacyPolicyUrl": null,
     "termsOfServiceUrl": null,
     "maxUploadFileSize": null,
