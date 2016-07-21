@@ -78,7 +78,7 @@ if [ ! -e ~/taiga-back ]; then
     
     pushd ~/taiga-events
     npm install
-    npm install -g coffee-script
+    sudo npm install -g coffee-script
     
     mv /tmp/config.events.json config.json
     coffee index.coffee

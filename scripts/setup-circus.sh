@@ -57,7 +57,7 @@ PYTHONPATH=/home/$USER/.local/lib/python3.5/site-packages
 
 [watcher:taiga-events]
 working_dir = /home/$USER/taiga-events
-cmd = /usr/local/bin/coffee
+cmd = coffee
 args = index.coffee
 uid = taiga
 numprocesses = 1
@@ -72,6 +72,15 @@ stderr_stream.filename = /home/$USER/logs/taigaevents.stderr.log
 stderr_stream.max_bytes = 10485760
 stderr_stream.backup_count = 12
 
+[env:taiga-events]
+PATH = /home/$USER/.virtualenvs/taiga/bin:$PATH
+TERM=rxvt-256color
+SHELL=/bin/bash
+USER=taiga
+LANG=en_US.UTF-8
+HOME=/home/$USER
+PYTHONPATH=/home/$USER/.local/lib/python3.5/site-packages
+
 EOF
 
 if [ ! -e ~/.setup/circus ]; then
@@ -81,12 +90,12 @@ if [ ! -e ~/.setup/circus ]; then
     touch ~/.setup/circus
 fi
 
-circusctl reloadconfig
+# circusctl reloadconfig
 
-circusctl start taiga
-circusctl start taiga-celery
-circusctl start taiga-events
+# circusctl start taiga
+# circusctl start taiga-celery
+# circusctl start taiga-events
 
-circusctl restart taiga
-circusctl restart taiga-celery
-circusctl restart taiga-events
+# circusctl restart taiga
+# circusctl restart taiga-celery
+# circusctl restart taiga-events
