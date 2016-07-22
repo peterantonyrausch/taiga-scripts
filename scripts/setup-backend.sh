@@ -81,7 +81,8 @@ if [ ! -e ~/taiga-back ]; then
     mkvirtualenv-if-needed taiga
 
     pip install -r requirements.txt
-    pip install taiga-contrib-ldap-auth # LDAP
+    # pip install taiga-contrib-ldap-auth # LDAP
+    pip install git+https://github.com/peterantonyrausch/taiga-contrib-ldap-auth.git
     
     python manage.py migrate --noinput
     python manage.py compilemessages
