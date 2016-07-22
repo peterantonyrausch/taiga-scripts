@@ -28,7 +28,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 #EMAIL_HOST_PASSWORD = ""
 #EMAIL_PORT = 25
 
-BROKER_URL = 'amqp://taiga:taiga@localhost:5672//'
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ENABLED = True
 
