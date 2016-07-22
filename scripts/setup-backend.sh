@@ -80,11 +80,9 @@ if [ ! -e ~/taiga-back ]; then
     rabbit-set-permissions taiga taiga ".*" ".*" ".*" # username, vhost, configure, read, write
     mkvirtualenv-if-needed taiga
 
-    # Settings
-    mv /tmp/settings.py settings/local.py
-    workon taiga
-
     pip install -r requirements.txt
+    pip install taiga-contrib-ldap-auth # LDAP
+    
     python manage.py migrate --noinput
     python manage.py compilemessages
     python manage.py collectstatic --noinput
@@ -93,8 +91,9 @@ if [ ! -e ~/taiga-back ]; then
     python manage.py loaddata initial_role
     python manage.py sample_data
 
-    # LDAP
-    pip install taiga-contrib-ldap-auth
+    # Settings
+    mv /tmp/settings.py settings/local.py
+    workon taiga
 
     popd
     
