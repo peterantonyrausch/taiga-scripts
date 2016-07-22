@@ -15,6 +15,7 @@ cat > /tmp/conf.json <<EOF
     "termsOfServiceUrl": null,
     "maxUploadFileSize": null,
     "gitHubClientId": null,
+    "loginFormType": "ldap",
     "contribPlugins": []
 }
 EOF
