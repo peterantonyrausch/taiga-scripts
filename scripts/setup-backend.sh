@@ -15,8 +15,8 @@ STATIC_URL = "/static/"
 # for external dns.
 SITES["front"]["domain"] = "localhost:8000" # colocar URL de verdade
 
-DEBUG = True
-PUBLIC_REGISTER_ENABLED = True
+DEBUG = False
+PUBLIC_REGISTER_ENABLED = False
 
 DEFAULT_FROM_EMAIL = "no-reply@example.com"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL

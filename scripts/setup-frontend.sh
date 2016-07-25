@@ -8,8 +8,8 @@ cat > /tmp/conf.json <<EOF
 {
     "api": "/api/v1/",
     "eventsUrl": "/events",
-    "debug": "true",
-    "publicRegisterEnabled": true,
+    "debug": "false",
+    "publicRegisterEnabled": false,
     "feedbackEnabled": true,
     "privacyPolicyUrl": null,
     "termsOfServiceUrl": null,
